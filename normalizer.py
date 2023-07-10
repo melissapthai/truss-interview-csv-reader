@@ -5,24 +5,28 @@ import re
 import sys
 
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 
 ZIP_CODE_LENGTH = 5
 
 
-def convert_to_seconds(duration: str) -> float:
+def convert_to_seconds(duration: str) -> Decimal:
     """
     Takes a duration in HH:MM:SS.MS format and converts it to seconds.
     :param duration string
     :return: total seconds
     """
     hh, mm, ss, ms = tuple(map(int, re.split(r'[:.]', duration)))
-    return timedelta(
+    td = timedelta(
         hours=hh,
         minutes=mm,
         seconds=ss,
         milliseconds=ms
     ).total_seconds()
+
+    # Use Decimal to avoid floating point precision issues
+    return Decimal(str(td))
 
 
 def main():
@@ -59,7 +63,6 @@ def main():
 
             # FooDuration / BarDuration
             # Convert HH:MM:SS.MS format to total number of seconds
-            # TODO: should total seconds be float or int?
             foo_duration = convert_to_seconds(row['FooDuration'])
             bar_duration = convert_to_seconds(row['BarDuration'])
 
